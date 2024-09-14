@@ -1,1 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Just Login!</title>
+    <style>
+      body {
+        background: linear-gradient(rgb(104, 104, 163), rgb(168, 37, 168));
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
 
+      .container {
+        width: 300px;
+        padding: 20px 70px 20px 50px;
+        border-radius: 20px;
+        text-align: center;
+        background-color: #ffffff;
+        color: #000000;
+      }
+      h1 {
+        margin-bottom: 20px;
+        color: #000000;
+      }
+
+      label {
+        display: block;
+        text-align: left;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 16px;
+        border: 1px solid #cccccc;
+        border-radius: 20px;
+      }
+
+      button {
+        width: 105%;
+        padding: 10px;
+        background-color: rgb(147, 59, 147);
+        color: #ffffff;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+
+      #message {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+
+      #message.success {
+        color: #4aa04d;
+      }
+
+      #message.error {
+        color: #ff0000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Just Login!</h1>
+      <form id="loginForm">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required /><br /><br />
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+        /><br /><br />
+        <button type="submit">Login</button>
+      </form>
+
+      <div id="message"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          const response = await fetch("/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            localStorage.setItem("token", data.token);
+            showMessage("Login successful!", "success");
+          } else {
+            showMessage(data.error || "Login failed!", "error");
+          }
+        });
+
+      function showMessage(message, type) {
+        const messageDiv = document.getElementById("message");
+        messageDiv.textContent = message;
+        messageDiv.className = type;
+      }
+    </script>
+  </body>
+</html>
